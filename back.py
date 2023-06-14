@@ -5,29 +5,52 @@ import random
 
 
 
-def conectarBanco(area):
+def criaConexao():
     try:
         conexao = mysql.connector.connect( host="localhost", user="root", password="", database="saep")
-        cursor = conexao.cursor()
-        consulta = "SELECT `quantidade` FROM `alocacao` WHERE area = %s;"
-        cursor.execute(consulta, (area,))
-        resultado = cursor.fetchall()  # recupera todos os resultados da consulta
+        return conexao   
     except Error as erro:
         print("Erro ao acessar tabela MysQL", erro)
-    finally:
-        if(conexao.is_connected()):
-            conexao.close()
-            cursor.close()
-            print("\nConexao ao MysQL encerrada\n\n")        
-            return resultado
 
-area = random.randint(1,10)
-print("area",area)
+def criaCursor(conexao): 
+    try:
+        cursor = conexao.cursor()
+        return cursor   
+    except Error as erro:
+        print("Erro ao criar cursor", erro)
 
-vaga = conectarBanco(area)
+def fecharConexaoBanco(conexao, cursor):
+    if(conexao.is_connected()):
+        conexao.close()
+        cursor.close()
+        print("\nConexao ao MysQL encerrada\n\n")
+
+def executarConsulta(consulta, area):
+    conexao = criaConexao()
+    cursor = criaCursor(conexao)
+    cursor.execute(consulta, (area,))
+    resultado = cursor.fetchall()  # recupera todos os resultados da consulta
+
+    fecharConexaoBanco(conexao, cursor)
+    return resultado
 
 
-if len(resultado) > 0:
-    estaVaga = False
+
+
+areaSelecionada = random.randint(1,10)
+print("area",areaSelecionada)
+
+areaConteudo = executarConsulta("SELECT `quantidade` FROM `alocacao` WHERE area = %s;", areaSelecionada)
+
+
+
+
+if len(areaConteudo) > 0:
+    vazio = False
 else:
-    estaVaga = True
+    vazio = True
+
+if vazio:
+    print("branco")
+else:
+    print("azul")
