@@ -7,7 +7,7 @@ import random
 
 def criaConexao():
     try:
-        conexao = mysql.connector.connect( host="localhost", user="root", password="", database="saep")
+        conexao = mysql.connector.connect( host="localhost", user="root", password="", database="saep", port="3307")
         return conexao   
     except Error as erro:
         print("Erro ao acessar tabela MysQL", erro)
@@ -23,7 +23,7 @@ def fecharConexaoBanco(conexao, cursor):
     if(conexao.is_connected()):
         conexao.close()
         cursor.close()
-        print("\nConexao ao MysQL encerrada\n\n")
+        # print("\nConexao ao MysQL encerrada\n\n")
 
 def executarConsulta(consulta, area):
     conexao = criaConexao()
@@ -34,23 +34,32 @@ def executarConsulta(consulta, area):
     fecharConexaoBanco(conexao, cursor)
     return resultado
 
+def passarMouseNaArea(area):
+    areaConteudo = executarConsulta("SELECT `quantidade` FROM `alocacao` WHERE area = %s;", area)
+    if len(areaConteudo) == 0:
+        vazio = True
+    else:
+        vazio = False
+    return vazio
 
-
+def clicarArea(area):
+    resultado = executarConsulta('''
+        SELECT auto.MODELO, auto.PRECO 
+        from automoveis as auto
+        inner join alocacao aloc
+        on aloc.automovel = auto.id
+        where aloc.area = %s;
+        ''', area)
+    
+    return resultado
 
 areaSelecionada = random.randint(1,10)
 print("area",areaSelecionada)
 
-areaConteudo = executarConsulta("SELECT `quantidade` FROM `alocacao` WHERE area = %s;", areaSelecionada)
-
-
-
-
-if len(areaConteudo) > 0:
-    vazio = False
-else:
-    vazio = True
-
-if vazio:
+if passarMouseNaArea(areaSelecionada):
     print("branco")
 else:
     print("azul")
+
+for linha in (clicarArea(areaSelecionada)):
+    print(linha)
