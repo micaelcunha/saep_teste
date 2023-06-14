@@ -24,10 +24,10 @@ def conectarBanco(area):
 area = random.randint(1,10)
 print("area",area)
 
-resultado = conectarBanco(area)
+vaga = conectarBanco(area)
 
 
 if len(resultado) > 0:
-    print("A vaga esta fechada")
+    estaVaga = False
 else:
-    print("A vaga esta aberta")
+    estaVaga = True
