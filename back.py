@@ -2,6 +2,7 @@ import mysql.connector
 from mysql.connector import Error
 import pandas as pd
 import random
+from flask import Flask, render_template
 
 
 
@@ -53,6 +54,14 @@ def clicarArea(area):
     
     return resultado
 
+app = Flask(__name__)
+
+@app.route("/")
+def homePage():
+    return render_template("homePage.html")
+
+
+
 areaSelecionada = random.randint(1,10)
 print("area",areaSelecionada)
 
@@ -63,3 +72,6 @@ else:
 
 for linha in (clicarArea(areaSelecionada)):
     print(linha)
+
+if __name__ == "__main__":
+    app.run(debug=True)
