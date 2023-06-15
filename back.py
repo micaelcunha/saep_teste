@@ -7,7 +7,7 @@ import random
 
 def criaConexao():
     try:
-        conexao = mysql.connector.connect( host="localhost", user="root", password="", database="saep", port="3307")
+        conexao = mysql.connector.connect( host="localhost", user="root", password="", database="saep", port="3306")
         return conexao   
     except Error as erro:
         print("Erro ao acessar tabela MysQL", erro)
